@@ -3,14 +3,15 @@ import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 //import org.scalablytyped.sbt.ScalablyTypedPlugin.autoImport.ScalablyTyped
 
 object Settings {
-  val version = "0.0.1"
+  val version = "0.0.2-SNAPSHOT"
 
   val organization = "io.kinoplan"
 
   val description = "scalajs-react facade for material-ui"
 
   object versions {
-    val scala = "2.12.10"
+    val scala212 = "2.12.12"
+    val scala213 = "2.13.3"
 
     object bundler {
       val webpack = "4.41.5"
@@ -19,22 +20,22 @@ object Settings {
     }
 
     object scalajs {
-      val scalajsReact = "1.6.0"
-      val scalaCss = "0.5.6"
-      val scalajsDom = "0.9.8"
-      val catsCore = "2.1.0"
-      val scalajsReactBridge = "0.8.1"
+      val scalajsReact = "1.7.4"
+      val scalaCss = "0.6.1"
+      val scalajsDom = "1.0.0"
+      val catsCore = "2.1.1"
+      val scalajsReactBridge = "0.8.3-SNAPSHOT"
       val scalablyTypedRuntime = "2.1.0"
     }
 
     object npm {
-      val react = "16.7.0"
+      val react = "16.13.1"
 
       val materialUi = "3.9.0"
       val materialUiIcons = "3.0.2"
       val materialUiLab = "3.0.0-alpha.30"
 
-      val reactSwipeableViews = "0.13.3"
+      val reactSwipeableViews = "0.13.0"
     }
   }
 
@@ -48,11 +49,11 @@ object Settings {
     "com.github.japgolly.scalajs-react" %%% "extra"                % versions.scalajs.scalajsReact,
     "com.github.japgolly.scalacss"      %%% "core"                 % versions.scalajs.scalaCss,
     "com.github.japgolly.scalacss"      %%% "ext-react"            % versions.scalajs.scalaCss,
-    "com.github.japgolly.scalacss"      %% "ext-scalatags"         % versions.scalajs.scalaCss,
+    "com.github.japgolly.scalacss"      %%% "ext-scalatags"        % versions.scalajs.scalaCss,
     "org.scala-js"                      %%% "scalajs-dom"          % versions.scalajs.scalajsDom,
     "org.typelevel"                     %%% "cats-core"            % versions.scalajs.catsCore,
     "com.payalabs"                      %%% "scalajs-react-bridge" % versions.scalajs.scalajsReactBridge,
-    "com.olvind"                        %%% "scalablytyped-runtime" % versions.scalajs.scalablyTypedRuntime
+    "com.olvind"                        %%% "scalablytyped-runtime" % versions. scalajs.scalablyTypedRuntime,
 //    Unmanaged jars in client/lib are used until the LTS version of sbt-scalablytyped appears
 //    ScalablyTyped.R.`react-swipeable-views`
   ))
@@ -78,7 +79,9 @@ object Settings {
 
   val npmDependenciesDemo = Def.setting(reactDependencies ++ Seq(
     "react-swipeable-views"       -> versions.npm.reactSwipeableViews,
+    "@types/react-swipeable-views"       -> versions.npm.reactSwipeableViews,
     "react-swipeable-views-utils" -> versions.npm.reactSwipeableViews,
+    "@types/react-swipeable-views-utils" -> versions.npm.reactSwipeableViews,
     "@material-ui/core"           -> versions.npm.materialUi,
     "@material-ui/icons"          -> versions.npm.materialUiIcons,
     "@material-ui/lab"            -> versions.npm.materialUiLab
@@ -192,9 +195,20 @@ object Settings {
     "-Xlint"
   )
 
+  // Some options are valid for Scala versions < 2.13 only
+  // Scala 2.13 removes them, see https://github.com/scala/scala/pull/6502, https://github.com/scala/scala/pull/5969
+  // and https://github.com/scala/scala/releases/tag/v2.13.3
+  val scalac212SpecificOptions = Seq(
+    "-Ypartial-unification",             // Enable partial unification in type constructor inference
+    "-Xlint:by-name-right-associative",  // By-name parameter of right associative operator.
+    "-Xlint:unsound-match",              // Pattern match may not be typesafe.
+    "-Xlint:nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
+    "-Xfuture",                          // Turn on future language features.
+  )
+
   val scalacOptions = Seq(
     "-target:jvm-1.8",
-    "-deprecation",                      // Emit warning and location for usages of deprecated APIs.
+    "-deprecation",                      // Emit warning and location for usages of deprecated APIs. // TODO Restore
     "-encoding", "utf-8",                // Specify character encoding used by source files.
     "-explaintypes",                     // Explain type errors in more detail.
     "-feature",                          // Emit warning and location for usages of features that should be imported explicitly.
@@ -204,17 +218,14 @@ object Settings {
     "-language:implicitConversions",     // Allow definition of implicit functions called views
     "-unchecked",                        // Enable additional warnings where generated code depends on assumptions.
     "-Xcheckinit",                       // Wrap field accessors to throw an exception on uninitialized access.
-    "-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
-    "-Xfuture",                          // Turn on future language features.
+    //"-Xfatal-warnings",                  // Fail the compilation if there are any warnings.
     "-Xlint:adapted-args",               // Warn if an argument list is modified to match the receiver.
-    "-Xlint:by-name-right-associative",  // By-name parameter of right associative operator.
     "-Xlint:constant",                   // Evaluation of a constant arithmetic expression results in an error.
     "-Xlint:delayedinit-select",         // Selecting member of DelayedInit.
     "-Xlint:doc-detached",               // A Scaladoc comment appears to be detached from its element.
     "-Xlint:inaccessible",               // Warn about inaccessible types in method signatures.
     "-Xlint:infer-any",                  // Warn when a type argument is inferred to be `Any`.
     "-Xlint:missing-interpolator",       // A string literal appears to be missing an interpolator id.
-    "-Xlint:nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
     "-Xlint:nullary-unit",               // Warn when nullary methods return Unit.
     "-Xlint:option-implicit",            // Option.apply used implicit view.
     "-Xlint:package-object-classes",     // Class or object defined in package object.
@@ -222,23 +233,13 @@ object Settings {
     "-Xlint:private-shadow",             // A private field (or class parameter) shadows a superclass field.
     "-Xlint:stars-align",                // Pattern sequence wildcard must align with sequence component.
     "-Xlint:type-parameter-shadow",      // A local type parameter shadows a type already in scope.
-    "-Xlint:unsound-match",              // Pattern match may not be typesafe.
-    "-Yno-adapted-args",                 // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver.
-    "-Ypartial-unification",             // Enable partial unification in type constructor inference
+    "-Xlint:adapted-args",               // Warn on argument list adaptation (either by inserting () or creating a tuple) to match the receiver.
+    "-Xlint:inaccessible",               // Warn about inaccessible types in method signatures.
     "-Ywarn-extra-implicit",             // Warn when more than one implicit parameter section is defined.
-    "-Ywarn-inaccessible",               // Warn about inaccessible types in method signatures.
-    "-Ywarn-infer-any",                  // Warn when a type argument is inferred to be `Any`.
-    "-Ywarn-nullary-override",           // Warn when non-nullary `def f()' overrides nullary `def f'.
-    "-Ywarn-nullary-unit",               // Warn when nullary methods return Unit.
+    "-Xlint:infer-any",                  // Warn when a type argument is inferred to be `Any`.
     "-Ywarn-numeric-widen",              // Warn when numerics are widened.
-    "-Ywarn-unused:implicits",           // Warn if an implicit parameter is unused.
-    "-Ywarn-unused:imports",             // Warn if an import selector is not referenced.
-    "-Ywarn-unused:locals",              // Warn if a local definition is unused.
-    // "-Ywarn-unused:params",              // Warn if a value parameter is unused.
-    // "-Ywarn-unused:patvars",             // Warn if a variable bound in a pattern is unused.
-    "-Ywarn-unused:privates",            // Warn if a private member is unused.
+    "-Xlint:unused",                     // Warn if an implicit/import/local/private is unused.
     "-Ywarn-value-discard",              // Warn when non-Unit expression results are unused.
-    "-P:scalajs:sjsDefinedByDefault",
     "-Yrangepos"
   )
 }

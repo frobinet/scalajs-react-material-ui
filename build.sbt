@@ -1,5 +1,8 @@
 addCommandAlias("restartWDS", "; demo/fastOptJS::stopWebpackDevServer; ~demo/fastOptJS::startWebpackDevServer")
 
+enablePlugins(ScalaJSPlugin)
+enablePlugins(ScalablyTypedConverterPlugin)
+
 lazy val root = project.in(file(".")).settings(commonSettings).aggregate(core, icons, lab, demo).settings(
   name            := "scalajs-react-material-ui",
   skip in publish := true
@@ -31,6 +34,7 @@ lazy val muiColorsGenerator = taskKey[Seq[File]]("mui-colors-generator")
 lazy val core = (project in file("core")).settings(commonSettings).settings(
   name := "scalajs-react-material-ui-core",
   scalaJSUseMainModuleInitializer  := false,
+  scalacOptions ++= (if (scalaJSVersion.startsWith("0.6.")) Seq("-P:scalajs:sjsDefinedByDefault") else Nil),
   npmDependencies in Compile ++= Settings.npmDependenciesCore.value,
   libraryDependencies ++= Settings.scalajsDependenciesLib.value,
   muiColorsGenerator := Settings.generateColors(
@@ -61,7 +65,7 @@ lazy val lab = (project in file("lab")).settings(commonSettings).settings(
   libraryDependencies ++= Settings.scalajsDependenciesLib.value
 ).enablePlugins(ScalaJSBundlerPlugin)
 
-lazy val demo = (project in file("demo")).dependsOn(core, lab)
+lazy val demo = (project in file("demo")).dependsOn(core, icons, lab)
   .settings(commonSettings).settings(
   scalaJSUseMainModuleInitializer  := true,
   npmDependencies in Compile ++= Settings.npmDependenciesDemo.value,
@@ -70,11 +74,12 @@ lazy val demo = (project in file("demo")).dependsOn(core, lab)
   yarnExtraArgs                    := Seq("--silent"),
   webpackConfigFile in fastOptJS   := Some(baseDirectory.value / "dev.webpack.config.js"),
   skip in publish := true
-).enablePlugins(ScalaJSBundlerPlugin)
+).enablePlugins(ScalaJSBundlerPlugin, ScalablyTypedConverterPlugin)
 
 lazy val commonSettings = Seq(
   version := Settings.version,
-  scalaVersion := Settings.versions.scala,
+  scalaVersion := Settings.versions.scala213,
+  crossScalaVersions := Seq(Settings.versions.scala213, Settings.versions.scala212),
   organization := Settings.organization,
   description := Settings.description,
   homepage := Some(url("https://github.com/kinoplan/scalajs-react-material-ui")),
@@ -85,7 +90,8 @@ lazy val commonSettings = Seq(
   version in webpack := Settings.versions.bundler.webpack,
   version in startWebpackDevServer := Settings.versions.bundler.webpackDev,
   webpackCliVersion := Settings.versions.bundler.webpackCli,
-  emitSourceMaps := false,
+  //emitSourceMaps := false,
   javacOptions ++= Settings.javacOptions,
-  scalacOptions in ThisBuild ++= Settings.scalacOptions
+  scalacOptions in ThisBuild ++=
+    Settings.scalacOptions ++ (if (scalaVersion == Settings.versions.scala212) Settings.scalac212SpecificOptions else Nil)
 )

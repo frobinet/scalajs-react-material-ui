@@ -9,11 +9,10 @@ import io.kinoplan.scalajs.react.material.ui.core.styles.Direction
 import io.kinoplan.scalajs.react.material.ui.core._
 import io.kinoplan.scalajs.react.material.ui.icons.{MuiAddIcon, MuiEditIcon, MuiKeyboardArrowUpIcon}
 import japgolly.scalajs.react.vdom.Attr
-import japgolly.scalajs.react.vdom.all.{VdomElement, _}
+import japgolly.scalajs.react.vdom.all._
 import japgolly.scalajs.react.{BackendScope, Callback, ReactEvent, ScalaComponent}
 import scalacss.ScalaCssReactImplicits
-import typings.reactDashSwipeableDashViews.{reactDashSwipeableDashViewsStrings => SwipeableViewsStrings}
-
+import typings.reactSwipeableViews.{reactSwipeableViewsStrings => SwipeableViewsStrings}
 import scala.scalajs.js
 
 object FloatingActionButtonZoom extends ScalaCssReactImplicits {

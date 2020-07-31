@@ -9,7 +9,7 @@ import io.kinoplan.scalajs.react.material.ui.core.{MuiAppBar, MuiTab, MuiTabs}
 import japgolly.scalajs.react.vdom.all.{VdomElement, _}
 import japgolly.scalajs.react.{BackendScope, Callback, ReactEvent, ScalaComponent}
 import scalacss.ScalaCssReactImplicits
-import typings.reactDashSwipeableDashViews.{reactDashSwipeableDashViewsStrings => SwipeableViewsStrings}
+import typings.reactSwipeableViews.{reactSwipeableViewsStrings => SwipeableViewsStrings}
 
 import scala.scalajs.js
 

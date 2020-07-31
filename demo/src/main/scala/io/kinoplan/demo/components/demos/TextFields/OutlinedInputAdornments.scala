@@ -9,7 +9,7 @@ import io.kinoplan.scalajs.react.material.ui.core.{MuiIconButton, MuiInputAdornm
 import io.kinoplan.scalajs.react.material.ui.icons.{MuiVisibilityIcon, MuiVisibilityOffIcon}
 import japgolly.scalajs.react.vdom.Attr
 import japgolly.scalajs.react.vdom.all._
-import japgolly.scalajs.react.{BackendScope, ReactEventFromTextArea, ScalaComponent}
+import japgolly.scalajs.react.{BackendScope, ReactEventFromTextArea, ScalaComponent, raw}
 import scalacss.ScalaCssReactImplicits
 
 object OutlinedInputAdornments extends ScalaCssReactImplicits {
@@ -127,7 +127,7 @@ object OutlinedInputAdornments extends ScalaCssReactImplicits {
             MuiTextField(
               label = "Password".toVdom,
               variant = MuiTextField.Variant.outlined,
-              InputProps = MuiInputProps(endAdornment = passwordEndAdormnent.rawNode)
+              InputProps = MuiInputProps(endAdornment = passwordEndAdormnent.rawNode: raw.React.Node)
             )(css.cssMargin, css.textField,
               id := "outlined-adornment-password",
               `type` := state.showPasswordType,

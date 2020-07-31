@@ -3,7 +3,8 @@ package io.kinoplan.demo.components.wrappers
 import japgolly.scalajs.react.vdom.Implicits.vdomNodeFromRawReactNode
 import japgolly.scalajs.react.vdom.all._
 import japgolly.scalajs.react.{BackendScope, Children, JsComponent, ScalaComponent}
-import typings.reactDashSwipeableDashViews.reactDashSwipeableDashViewsMod.{AxisType, SwipeableViewsProps, default}
+import typings.reactSwipeableViews.mod.{SwipeableViewsProps, default}
+import typings.reactSwipeableViews.mod.AxisType
 
 import scala.scalajs.js
 import scala.scalajs.js.|
@@ -21,12 +22,10 @@ object SwipeableViews {
 
   class Backend(t: BackendScope[Props, Unit]) {
     def render(props: Props): VdomNode = {
-      val swipeableViewsProps = SwipeableViewsProps(
-        axis = props.axis,
-        index = props.index,
-        onChangeIndex = props.onChangeIndex
-      )
-
+      val swipeableViewsProps = SwipeableViewsProps()
+      swipeableViewsProps.setAxis(props.axis)
+      swipeableViewsProps.setIndex(props.index.merge)
+      swipeableViewsProps.setOnChangeIndex(props.onChangeIndex)
       SwipeableViewsFacade(swipeableViewsProps)(props.children:_*).rawNode
     }
   }

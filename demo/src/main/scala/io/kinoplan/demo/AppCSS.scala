@@ -33,6 +33,7 @@ import io.kinoplan.demo.styles.labs.SpeedDial.DefaultSpeedDialStyle
 import io.kinoplan.demo.styles.labs.ToggleButton.DefaultToggleButtonStyle
 import scalacss.ScalaCssReactImplicits
 import scalacss.internal.mutable.StyleSheetRegistry
+//import scalacss.defaults.Exports._
 
 object AppCSS extends ScalaCssReactImplicits {
   val registry = new StyleSheetRegistry
